@@ -27,6 +27,6 @@ jobs:
 
     - name: Run Script
       env:
-        NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
-        EMAIL_PASSWORD: ${{ secrets.PASSWORD }}
-      run: python Src/Main.py
+        news_api_key: ${{ secrets.news_api_key }}
+        password: ${{ secrets.password }}
+      run: python Main.py
