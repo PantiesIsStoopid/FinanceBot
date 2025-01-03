@@ -48,8 +48,8 @@ def generate_email_content():
 
 # Send Email
 def send_email(subject, body):
-  from_email = "nylewagjiani@gmail.com"
-  to_email = 'nylewagjiani@gmail.com'
+  from_email = os.getenv("email")
+  to_email = os.getenv("email")
   password = os.getenv('password')
 
 

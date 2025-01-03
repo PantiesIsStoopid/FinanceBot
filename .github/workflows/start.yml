@@ -29,4 +29,5 @@ jobs:
       env:
         news_api_key: ${{ secrets.news_api_key }}
         password: ${{ secrets.password }}
+        email: ${{ secrets.email }}
       run: python Main.py
