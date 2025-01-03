@@ -33,7 +33,7 @@ def generate_email_content():
   <head>
     <style>
       body {{ font-family: Arial, sans-serif; }}
-      h1 {{ color: #2e3d49; }}
+      h1 {{ color: #c1c1ce; }}
       h3 {{ color: #0073e6; }}
     </style>
   </head>
