@@ -69,10 +69,10 @@ def generate_email_content():
         }}
         
         .Card {{
-            background-color: #1c1c1e;
+            background-color: #141414;
             margin: 32px;
             border-radius: 30px;
-            padding: 32px;
+            padding: 15px;
             font-size: 24px;
             color: white;
             text-align: center;
