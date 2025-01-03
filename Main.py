@@ -70,9 +70,8 @@ def generate_email_content():
     # Generate Watchlist News and sentiment prediction
     for stock in watchlist:
         news = fetch_news(stock, api_key)
-        headlines = [article['title'] for article in response.json().get("articles", [])[:3]]
-        predicted_movement = analyze_sentiment(headlines)
-        watchlist_news += f"<h3>{stock} News:</h3><ul>{news}</ul><p>Predicted Movement: {predicted_movement}</p>"
+        predicted_movement = analyze_sentiment(news)  # Use the 'news' directly here
+        watchlist_news += f"<h3>{stock} News:</h3><ul>{' '.join([f'<li>{headline}</li>' for headline in news])}</ul><p>Predicted Movement: {predicted_movement}</p>"
 
     # Add Market Bias Analysis for S&P 500 (VUSA)
     ticker = "VUSA.L"
@@ -105,7 +104,6 @@ def generate_email_content():
     """
 
     return email_body
-
 
 email = os.getenv("EMAIL")
 # Send Email
