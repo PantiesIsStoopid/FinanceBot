@@ -17,7 +17,7 @@ def fetch_news(stock_symbol, api_key):
 
 # Generate Email Content
 def generate_email_content():
-  api_key = os.getenv('NEWS_API_KEY')
+  api_key = os.getenv('news_api_key')
   watchlist = ["AAPL", "TSLA", "GOOG"]
 
   # Generate Watchlist News
@@ -49,8 +49,8 @@ def generate_email_content():
 # Send Email
 def send_email(subject, body):
   from_email = "nylewagjiani@gmail.com"
-  to_email = os.getenv('EMAIL_TO')
-  password = os.getenv('EMAIL_PASSWORD')
+  to_email = os.getenv('nylewagjiani@gmail.com')
+  password = os.getenv('password')
 
   msg = MIMEText(body, 'html')
   msg['Subject'] = subject
