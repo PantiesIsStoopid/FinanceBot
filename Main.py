@@ -19,36 +19,6 @@ def fetch_news(stock_symbol, api_key):
     return "\n".join(headlines)
 
 
-def calculate_market_bias(ticker):
-    try:
-        # Use '1d' period to get the latest data
-        data = yf.download(ticker, period="1d", interval="1d")
-        
-        if data.empty:
-            print(f"No data returned for {ticker}")
-            return None, None, "No Data"
-        
-        # Ensure we have the necessary data (open and close)
-        if len(data) < 1 or data['Open'].isna().any() or data['Close'].isna().any():
-            print(f"Insufficient or invalid data for {ticker}")
-            return None, None, "Insufficient Data"
-        
-        today_open = data['Open'].iloc[-1]  # Open price for today
-        today_close = data['Close'].iloc[-1]  # Close price for today
-
-        # Calculate market bias based on open and close comparison
-        if today_open > today_close:
-            bias = "Bearish"
-        elif today_open < today_close:
-            bias = "Bullish"
-        else:
-            bias = "Neutral"
-
-        return today_open, today_close, bias
-
-    except Exception as e:
-        print(f"Error fetching data for {ticker}: {e}")
-        return None, None, "Error"
 
 # Generate Email Content
 def generate_email_content():
@@ -61,18 +31,8 @@ def generate_email_content():
         news = fetch_news(stock, api_key)
         watchlist_news += f"<h3>{stock} News:</h3><ul>{news}</ul>"
 
-    ticker = "VUSA.L"
-    latest_open, latest_close, bias = calculate_market_bias(ticker)
     
-    if latest_open is None or latest_close is None:
-        market_summary = "<p>Market data unavailable for the requested ticker.</p>"
-    else:
-        market_summary = f"""
-        <h3>Market Bias for {ticker}:</h3>
-        <p>Today's Open: {latest_open}</p>
-        <p>Yesterday's Close: {latest_close}</p>
-        <p><strong>Market Bias: {bias}</strong></p>
-        """
+    
 
     email_body = f"""
     <html>
@@ -87,7 +47,6 @@ def generate_email_content():
         <h1>Daily Market Summary</h1>
         <h2>Watchlist News:</h2>
         {watchlist_news}
-        {market_summary}
     </body>
     </html>
     """
