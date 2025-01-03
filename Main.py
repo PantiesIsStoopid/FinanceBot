@@ -49,8 +49,9 @@ def generate_email_content():
 # Send Email
 def send_email(subject, body):
   from_email = "nylewagjiani@gmail.com"
-  to_email = os.getenv('nylewagjiani@gmail.com')
+  to_email = 'nylewagjiani@gmail.com'
   password = os.getenv('password')
+
 
   msg = MIMEText(body, 'html')
   msg['Subject'] = subject
