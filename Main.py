@@ -49,7 +49,15 @@ def generate_email_content():
   for stock in watchlist:
     news = fetch_news(stock, api_key)
     predicted_movement = analyze_sentiment(news) # Use the 'news' directly here
-    watchlist_news += f"<h3>{stock} News:</h3><ul>{' '.join([f'<li>{headline}</li>' for headline in news])}</ul><p>Predicted Movement: {predicted_movement}</p>"
+
+    # Set color for sentiment prediction (green for up, red for down)
+    movement_color = "green" if predicted_movement == "Up" else "red"
+
+    watchlist_news += f"""
+      <h3>{stock} News:</h3>
+      <ul>{' '.join([f'<li>{headline}</li>' for headline in news])}</ul>
+      <p><b style="color:{movement_color};">{predicted_movement}</b></p>
+    """
 
   # Create Email HTML
   email_body = f"""
@@ -70,6 +78,7 @@ def generate_email_content():
   """
 
   return email_body
+
 
 email = os.getenv("EMAIL")
 
