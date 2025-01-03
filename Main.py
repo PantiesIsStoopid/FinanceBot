@@ -6,15 +6,15 @@ import requests
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # Fetch News Headlines
+# Fetch News Headlines
 def fetch_news(stock_symbol, api_key):
     url = f"https://newsapi.org/v2/everything?q={stock_symbol}&apiKey={api_key}"
-    response = requests.get(url)
+    response = requests.get(url)  # This defines the response variable
     articles = response.json().get("articles", [])
 
-    headlines = []
-    for article in articles[:3]:  # Get top 3 headlines
-        headlines.append(f"<li><a href='{article['url']}'>{article['title']}</a></li>")
-    return "\n".join(headlines)
+    headlines = [article['title'] for article in articles[:3]]  # Fixed here
+    return headlines
+
 
 # Sentiment Analysis to predict stock movement
 def analyze_sentiment(headlines):
