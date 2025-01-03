@@ -45,8 +45,7 @@ def generate_email_content():
       align-items: center;
       height: 100vh;
     }}
-    .a {{
-    color: #fff;}}
+    
     .container {{
       text-align: center;
       background-color: #333;
@@ -78,6 +77,7 @@ def generate_email_content():
     }}
     .watchlist p {{
       font-size: 1.2rem;
+      color: #fff;
       margin: 10px 0;
     }}
     .footer {{
