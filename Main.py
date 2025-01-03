@@ -45,7 +45,10 @@ def generate_email_content():
       align-items: center;
       height: 100vh;
     }}
-    
+    a {{
+    color: white;
+    text-decoration: none;
+    }}
     .container {{
       text-align: center;
       background-color: #333;
