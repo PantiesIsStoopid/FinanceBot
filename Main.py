@@ -19,57 +19,59 @@ def fetch_news(stock_symbol, api_key):
 
 
 def calculate_market_bias(ticker):
-    # Fetch data for the stock
     try:
-        data = yf.download(ticker, period="1d", interval="1d")  # Change period to '1d'
+        # Use '1d' period to get the latest data
+        data = yf.download(ticker, period="1d", interval="1d")
         
         if data.empty:
             print(f"No data returned for {ticker}")
             return None, None, "No Data"
         
-        # Extract today's open and yesterday's close as scalars
-        today_open = data['Open'].iloc[0]  # Open price for today
-        yesterday_close = data['Close'].iloc[0]  # Close price from the last available day
+        # Ensure we have the necessary data (open and close)
+        if len(data) < 1 or data['Open'].isna().any() or data['Close'].isna().any():
+            print(f"Insufficient or invalid data for {ticker}")
+            return None, None, "Insufficient Data"
         
-        # Determine the market bias
-        if today_open > yesterday_close:
-            bias = "Bullish"
-        elif today_open < yesterday_close:
+        today_open = data['Open'].iloc[-1]  # Open price for today
+        today_close = data['Close'].iloc[-1]  # Close price for today
+
+        # Calculate market bias based on open and close comparison
+        if today_open > today_close:
             bias = "Bearish"
+        elif today_open < today_close:
+            bias = "Bullish"
         else:
             bias = "Neutral"
-        
-        return today_open, yesterday_close, bias
-    
+
+        return today_open, today_close, bias
+
     except Exception as e:
         print(f"Error fetching data for {ticker}: {e}")
         return None, None, "Error"
 
-
 # Generate Email Content
 def generate_email_content():
     api_key = os.getenv("news_api_key")
-
-    # List of stocks to fetch news for
     watchlist = ["AAPL", "TSLA", "GOOG"]
     watchlist_news = ""
 
-    # Generate Watchlist News
     for stock in watchlist:
         news = fetch_news(stock, api_key)
         watchlist_news += f"<h3>{stock} News:</h3><ul>{news}</ul>"
 
-    # Add Market Bias Analysis for S&P 500 (VUSA)
     ticker = "VUSA.L"
-    latest_open, latest_close, bias = calculate_market_bias(ticker)  # Updated for 3 values
-    market_summary = f"""
-    <h3>Market Bias for {ticker}:</h3>
-    <p>Latest Open: {latest_open}</p>
-    <p>Latest Close: {latest_close}</p>
-    <p><strong>Market Bias: {bias}</strong></p>
-    """
+    latest_open, latest_close, bias = calculate_market_bias(ticker)
+    
+    if latest_open is None or latest_close is None:
+        market_summary = "<p>Market data unavailable for the requested ticker.</p>"
+    else:
+        market_summary = f"""
+        <h3>Market Bias for {ticker}:</h3>
+        <p>Today's Open: {latest_open}</p>
+        <p>Yesterday's Close: {latest_close}</p>
+        <p><strong>Market Bias: {bias}</strong></p>
+        """
 
-    # Create Email HTML
     email_body = f"""
     <html>
     <head>
