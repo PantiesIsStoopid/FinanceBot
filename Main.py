@@ -6,14 +6,19 @@ import requests
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # Fetch News Headlines
-# Fetch News Headlines
 def fetch_news(stock_symbol, api_key):
-    url = f"https://newsapi.org/v2/everything?q={stock_symbol}&apiKey={api_key}"
-    response = requests.get(url)  # This defines the response variable
-    articles = response.json().get("articles", [])
-
-    headlines = [article['title'] for article in articles[:3]]  # Fixed here
-    return headlines
+    try:
+        url = f"https://newsapi.org/v2/everything?q={stock_symbol}&apiKey={api_key}"
+        response = requests.get(url)
+        response.raise_for_status()  # Raises an HTTPError for bad responses (4xx, 5xx)
+        
+        articles = response.json().get("articles", [])
+        headlines = [article['title'] for article in articles[:3]]  # Extract titles of top 3 articles
+        
+        return headlines
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching news: {e}")
+        return []
 
 
 # Sentiment Analysis to predict stock movement
