@@ -65,7 +65,7 @@ def generate_email_content():
         <style>
         body {{
             font-family: Arial, sans-serif;
-            background-color: #000;
+            background-color: #141414;
         }}
         
         .Card {{
@@ -73,7 +73,6 @@ def generate_email_content():
             margin: 32px;
             border-radius: 30px;
             padding: 15px;
-            font-size: 24px;
             color: white;
             text-align: center;
             border-radius: 10px;
