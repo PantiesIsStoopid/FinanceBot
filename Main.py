@@ -71,16 +71,20 @@ def generate_email_content():
     return email_body
 
 email = os.getenv("EMAIL")
+
 # Send Email
 def send_email(subject, body):
-    from_email = email
-    to_email = email
+    from_email = os.getenv("EMAIL")
+    to_email = from_email  # You can adjust this if you want to send it to others
     password = os.getenv("PASSWORD")
 
     msg = MIMEText(body, "html")
     msg["Subject"] = subject
     msg["From"] = from_email
     msg["To"] = to_email
+    
+    # Mark email as important
+    msg["X-Priority"] = "1"  # '1' is the highest priority (important)
 
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
