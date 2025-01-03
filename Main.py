@@ -41,7 +41,8 @@ def generate_email_content():
   api_key = os.getenv("NEWS_API_KEY")
 
   # List of stocks to fetch news for
-  watchlist = ["AAPL", "TSLA", "GOOG"]
+  watchlist = ["AAPL", "AMZN", "FB", "GOOG", "NFLX", "TSLA", "NVDA"]
+
   watchlist_news = ""
 
   # Generate Watchlist News and sentiment prediction
