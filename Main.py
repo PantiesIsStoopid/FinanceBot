@@ -61,7 +61,7 @@ def calculate_market_bias(ticker):
 
 # Generate Email Content
 def generate_email_content():
-    api_key = os.getenv("news_api_key")
+    api_key = os.getenv("NEWS_API_KEY")
 
     # List of stocks to fetch news for
     watchlist = ["AAPL", "TSLA", "GOOG"]
@@ -107,11 +107,12 @@ def generate_email_content():
     return email_body
 
 
+email = os.getenv("EMAIL")
 # Send Email
 def send_email(subject, body):
-    from_email = "nylewagjiani@gmail.com"
-    to_email = "nylewagjiani@gmail.com"
-    password = os.getenv("password")
+    from_email = email
+    to_email = email
+    password = os.getenv("PASSWORD")
 
     msg = MIMEText(body, "html")
     msg["Subject"] = subject
