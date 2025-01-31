@@ -6,43 +6,43 @@ import requests
 
 
 # Fetch News Headlines
-def fetch_news(stock_symbol, api_key):
+def FetchNews(StockSymbol, ApiKey):
     try:
-        url = f"https://newsapi.org/v2/everything?q={stock_symbol}&apiKey={api_key}"
-        response = requests.get(url)
-        response.raise_for_status()  # Raises an HTTPError for bad responses (4xx, 5xx)
+        Url = f"https://newsapi.org/v2/everything?q={StockSymbol}&apiKey={ApiKey}"
+        Response = requests.get(Url)
+        Response.raise_for_status()  # Raises an HTTPError for bad responses (4xx, 5xx)
 
-        articles = response.json().get("articles", [])
-        headlines = [
-            article["title"] for article in articles[:3]
+        Articles = Response.json().get("articles", [])
+        Headlines = [
+            Article["title"] for Article in Articles[:3]
         ]  # Extract titles of top 3 articles
 
-        return headlines
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching news: {e}")
+        return Headlines
+    except requests.exceptions.RequestException as E:
+        print(f"Error fetching news: {E}")
         return []
 
 
 # Generate Email Content
-def generate_email_content():
-    api_key = os.getenv("NEWS_API_KEY")
+def GenerateEmailContent():
+    ApiKey = os.getenv("NEWS_API_KEY")
 
     # List of stocks to fetch news for
-    watchlist = ["AAPL", "AMZN", "FB", "GOOG", "NFLX", "TSLA", "NVDA"]
+    Watchlist = ["AAPL", "AMZN", "FB", "GOOG", "NFLX", "TSLA", "NVDA"]
 
-    watchlist_news = ""
+    WatchlistNews = ""
 
     # Generate Watchlist News
-    for stock in watchlist:
-        news = fetch_news(stock, api_key)
+    for Stock in Watchlist:
+        News = FetchNews(Stock, ApiKey)
 
-        watchlist_news += f"""
-            <h3>{stock} News:</h3>
-            <ul>{' '.join([f'<li>{headline}</li>' for headline in news])}</ul>
+        WatchlistNews += f"""
+            <h3>{Stock} News:</h3>
+            <ul>{' '.join([f'<li>{Headline}</li>' for Headline in News])}</ul>
         """
 
     # Create Email HTML
-    email_body = f"""
+    EmailBody = f"""
     <html>
     <head>
         <style>
@@ -75,46 +75,46 @@ def generate_email_content():
         <div class="Card">
             <h1 class="Title">Daily Market Summary</h1>
             <h2 class="SubtitleNews">Watchlist News:</h2>
-            {watchlist_news}
+            {WatchlistNews}
         </div>
     </body>
     </html>
     """
 
-    return email_body
+    return EmailBody
 
 
-email = os.getenv("EMAIL")
+Email = os.getenv("EMAIL")
 
 
 # Send Email
-def send_email(subject, body):
-    from_email = os.getenv("EMAIL")
-    to_email = from_email  # You can adjust this if you want to send it to others
-    password = os.getenv("PASSWORD")
+def SendEmail(Subject, Body):
+    FromEmail = os.getenv("EMAIL")
+    ToEmail = FromEmail  # You can adjust this if you want to send it to others
+    Password = os.getenv("PASSWORD")
 
-    msg = MIMEText(body, "html")
-    msg["Subject"] = subject
-    msg["From"] = from_email
-    msg["To"] = to_email
+    Msg = MIMEText(Body, "html")
+    Msg["Subject"] = Subject
+    Msg["From"] = FromEmail
+    Msg["To"] = ToEmail
 
     # Mark email as important
-    msg["X-Priority"] = "1"  # '1' is the highest priority (important)
+    Msg["X-Priority"] = "1"  # '1' is the highest priority (important)
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
-        server.starttls()
-        server.login(from_email, password)
-        server.sendmail(from_email, to_email, msg.as_string())
+    with smtplib.SMTP("smtp.gmail.com", 587) as Server:
+        Server.starttls()
+        Server.login(FromEmail, Password)
+        Server.sendmail(FromEmail, ToEmail, Msg.as_string())
 
 
 # Main Function
-def main():
+def Main():
     # Generate email content
-    email_body = generate_email_content()
+    EmailBody = GenerateEmailContent()
 
     # Send the email
-    send_email("Daily Market Summary", email_body)
+    SendEmail("Daily Market Summary", EmailBody)
 
 
 if __name__ == "__main__":
-    main()
+    Main()
