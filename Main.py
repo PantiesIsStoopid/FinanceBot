@@ -23,6 +23,21 @@ def FetchNews(StockSymbol, ApiKey):
         return []
 
 
+# Get Stock Analysis
+def GetStockAnalysis(StockSymbol):
+    try:
+        Stock = yf.Ticker(StockSymbol)
+        Recommendations = Stock.recommendations
+        
+        if Recommendations is not None and not Recommendations.empty:
+            LatestRec = Recommendations.iloc[-1]['To Grade']
+            return LatestRec
+        return "No Analysis Available"
+    except Exception as E:
+        print(f"Error fetching analysis for {StockSymbol}: {E}")
+        return "Analysis Error"
+
+
 # Generate Email Content
 def GenerateEmailContent():
     ApiKey = os.getenv("NEWS_API_KEY")
@@ -35,9 +50,10 @@ def GenerateEmailContent():
     # Generate Watchlist News
     for Stock in Watchlist:
         News = FetchNews(Stock, ApiKey)
+        Analysis = GetStockAnalysis(Stock)
 
         WatchlistNews += f"""
-            <h3>{Stock} News:</h3>
+            <h3>{Stock} - Analyst Rating: <span style="color: #00ff00">{Analysis}</span></h3>
             <ul>{' '.join([f'<li>{Headline}</li>' for Headline in News])}</ul>
         """
 
