@@ -53,19 +53,28 @@ def GetStockAnalysis(StockSymbol):
 # Generate Email Content
 def GenerateEmailContent():
     ApiKey = os.getenv("NEWS_API_KEY")
-
-    # List of stocks to fetch news for
     Watchlist = ["AAPL", "AMZN", "FB", "GOOG", "NFLX", "TSLA", "NVDA"]
-
     WatchlistNews = ""
+
+    # Color mapping for different ratings
+    ColorMap = {
+        'Strong Buy': '#00FF00',  # Bright Green
+        'Buy': '#90EE90',        # Light Green
+        'Hold': '#FFFF00',       # Yellow
+        'Sell': '#FFB6C1',       # Light Red
+        'Strong Sell': '#FF0000', # Bright Red
+        'No Analysis Available': '#808080',  # Gray
+        'Analysis Error': '#808080'         # Gray
+    }
 
     # Generate Watchlist News
     for Stock in Watchlist:
         News = FetchNews(Stock, ApiKey)
         Analysis = GetStockAnalysis(Stock)
+        Color = ColorMap.get(Analysis, '#808080')  # Default to gray if rating not found
 
         WatchlistNews += f"""
-            <h3>{Stock} - Analyst Rating: <span style="color: #00ff00">{Analysis}</span></h3>
+            <h3>{Stock} - Analyst Rating: <span style="color: {Color}">{Analysis}</span></h3>
             <ul>{' '.join([f'<li>{Headline}</li>' for Headline in News])}</ul>
         """
 
