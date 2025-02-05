@@ -27,12 +27,22 @@ def FetchNews(StockSymbol, ApiKey):
 def GetStockAnalysis(StockSymbol):
     try:
         Stock = yf.Ticker(StockSymbol)
-        Recommendations = Stock.recommendations
+        Info = Stock.info
         
-        if Recommendations is not None and not Recommendations.empty:
-            LatestRec = Recommendations.iloc[-1]['To Grade']
-            return LatestRec
-        return "No Analysis Available"
+        # Get recommendation key from info
+        Recommendation = Info.get('recommendationKey', 'No Analysis Available')
+        
+        # Convert to more readable format
+        RecommendationMap = {
+            'strongBuy': 'Strong Buy',
+            'buy': 'Buy',
+            'hold': 'Hold',
+            'sell': 'Sell',
+            'strongSell': 'Strong Sell',
+            'none': 'No Analysis Available'
+        }
+        
+        return RecommendationMap.get(Recommendation, Recommendation)
     except Exception as E:
         print(f"Error fetching analysis for {StockSymbol}: {E}")
         return "Analysis Error"
