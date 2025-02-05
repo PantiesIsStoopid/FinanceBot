@@ -34,11 +34,13 @@ def GetStockAnalysis(StockSymbol):
         
         # Convert to more readable format
         RecommendationMap = {
+            'strong_buy': 'Strong Buy',
             'strongBuy': 'Strong Buy',
             'buy': 'Buy',
             'hold': 'Hold',
             'sell': 'Sell',
             'strongSell': 'Strong Sell',
+            'strong_sell': 'Strong Sell',
             'none': 'No Analysis Available'
         }
         
