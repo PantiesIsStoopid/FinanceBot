@@ -3,6 +3,10 @@ import smtplib
 from email.mime.text import MIMEText
 import yfinance as yf
 import requests
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+from datetime import datetime, timedelta
 
 
 # Fetch News Headlines
@@ -50,6 +54,43 @@ def GetStockAnalysis(StockSymbol):
         return "Analysis Error"
 
 
+# Generate Stock Graph
+def GenerateStockGraph(StockSymbol):
+    try:
+        # Get stock data for the last 30 days
+        Stock = yf.Ticker(StockSymbol)
+        EndDate = datetime.now()
+        StartDate = EndDate - timedelta(days=30)
+        History = Stock.history(start=StartDate, end=EndDate)
+        
+        # Create the plot
+        plt.figure(figsize=(10, 4))
+        plt.plot(History.index, History['Close'], color='white')
+        plt.title(f'{StockSymbol} - 30 Day Price History', color='white')
+        plt.grid(True, alpha=0.3)
+        
+        # Style the plot for dark theme
+        plt.gca().set_facecolor('#141414')
+        plt.gcf().set_facecolor('#141414')
+        plt.gca().spines['bottom'].set_color('white')
+        plt.gca().spines['top'].set_color('white')
+        plt.gca().spines['left'].set_color('white')
+        plt.gca().spines['right'].set_color('white')
+        plt.tick_params(colors='white')
+        
+        # Convert plot to base64 string
+        Buffer = BytesIO()
+        plt.savefig(Buffer, format='png', bbox_inches='tight', facecolor='#141414')
+        Buffer.seek(0)
+        Image = base64.b64encode(Buffer.getvalue()).decode()
+        plt.close()
+        
+        return Image
+    except Exception as E:
+        print(f"Error generating graph for {StockSymbol}: {E}")
+        return None
+
+
 # Generate Email Content
 def GenerateEmailContent():
     ApiKey = os.getenv("NEWS_API_KEY")
@@ -67,15 +108,15 @@ def GenerateEmailContent():
         'Analysis Error': '#808080'         # Gray
     }
 
-    # Generate Watchlist News
+    # Generate Watchlist Content
     for Stock in Watchlist:
-        News = FetchNews(Stock, ApiKey)
         Analysis = GetStockAnalysis(Stock)
-        Color = ColorMap.get(Analysis, '#808080')  # Default to gray if rating not found
-
+        Color = ColorMap.get(Analysis, '#808080')
+        GraphImage = GenerateStockGraph(Stock)
+        
         WatchlistNews += f"""
             <h3>{Stock} - Analyst Rating: <span style="color: {Color}">{Analysis}</span></h3>
-            <ul>{' '.join([f'<li>{Headline}</li>' for Headline in News])}</ul>
+            {'<img src="data:image/png;base64,' + GraphImage + '" style="width: 100%; max-width: 800px;">' if GraphImage else '<p>Graph unavailable</p>'}
         """
 
     # Create Email HTML
@@ -96,7 +137,7 @@ def GenerateEmailContent():
             color: white;
             text-align: center;
             border-radius: 10px;
-            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.7);  /* White glowing effect */
+            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.7);
         }}
         
         .Title {{
@@ -111,7 +152,7 @@ def GenerateEmailContent():
     <body>
         <div class="Card">
             <h1 class="Title">Daily Market Summary</h1>
-            <h2 class="SubtitleNews">Watchlist News:</h2>
+            <h2 class="SubtitleNews">Stock Ratings and Trends:</h2>
             {WatchlistNews}
         </div>
     </body>
