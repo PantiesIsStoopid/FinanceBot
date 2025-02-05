@@ -113,10 +113,12 @@ def GenerateEmailContent():
         Analysis = GetStockAnalysis(Stock)
         Color = ColorMap.get(Analysis, '#808080')
         GraphImage = GenerateStockGraph(Stock)
+        YahooLink = f"https://finance.yahoo.com/quote/{Stock}/news"
         
         WatchlistNews += f"""
             <h3>{Stock} - Analyst Rating: <span style="color: {Color}">{Analysis}</span></h3>
             {'<img src="data:image/png;base64,' + GraphImage + '" style="width: 100%; max-width: 800px;">' if GraphImage else '<p>Graph unavailable</p>'}
+            <p><a href="{YahooLink}" style="color: #0080ff; text-decoration: none;">Click here for latest {Stock} news →</a></p>
         """
 
     # Create Email HTML
@@ -146,6 +148,10 @@ def GenerateEmailContent():
         
         .SubtitleNews {{
             color: #0080ff;
+        }}
+        
+        a:hover {{
+            text-decoration: underline !important;
         }}
         </style>
     </head>
